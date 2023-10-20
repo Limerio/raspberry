@@ -1,0 +1,20 @@
+---
+- name: Ensure uptime-kuma directory exists.
+  ansible.builtin.file:
+    path: "{{ containers_dir_remote }}/uptime-kuma"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy uptime-kuma docker-compose file.
+  ansible.builtin.copy:
+    src: "{{ containers_dir_local }}/uptime-kuma/docker-compose.yml"
+    dest: "{{ containers_dir_remote }}/uptime-kuma/docker-compose.yml"
+    mode: 0644
+  become: false
+
+- name: Execute docker-compose command.
+  community.docker.docker_compose:
+    project_src: "{{ containers_dir_remote }}/uptime-kuma/"
+    build: false
+  become: false

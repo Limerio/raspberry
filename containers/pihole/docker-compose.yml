@@ -1,0 +1,35 @@
+version: "3.2"
+
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole
+    networks:
+      - main_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.service=pihole"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+      - "traefik.http.routers.pihole.entrypoints=web, websecure"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.neptune.local`)"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.tls.certresolver=staging"
+      - "traefik.http.routers.pihole.middlewares=rewrite-pihole"
+      - "traefik.http.middlewares.rewrite-pihole.replacepathregex.regex=^/(.*)"
+      - "traefik.http.middlewares.rewrite-pihole.replacepathregex.replacement=/admin/$$1"
+    ports:
+      - "800:80"
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+    environment:
+      TZ: "America/Chicago"
+    volumes:
+      - "/home/neptune/containers/pihole/etc-pihole:/etc/pihole"
+      - "/home/neptune/containers/pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
+    restart: unless-stopped
+
+networks:
+  main_network:
+    name: main_network
+    external: true

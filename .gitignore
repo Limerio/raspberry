@@ -1,0 +1,14 @@
+# terraform
+terraform.tfvars
+.terraform/
+.terraform.hcl.lock
+
+# ansible
+inventory.ini
+config.yml
+
+# vscode
+.vscode
+
+# env
+.env

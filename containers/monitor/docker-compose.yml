@@ -1,0 +1,69 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.46.0
+    container_name: prometheus
+    networks:
+      - main_network
+      - grafana_network
+    volumes:
+      - /home/neptune/containers/monitor/config/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: "--config.file=/etc/prometheus/prometheus.yml"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:10.0.3
+    container_name: grafana
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=web, websecure"
+      - "traefik.http.routers.grafana.rule=Host(`dashboard.neptune.local`)"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.tls.certresolver=staging"
+      - "traefik.docker.network=main_network"
+    networks:
+      - main_network
+      - grafana_network
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.6.1
+    container_name: node_exporter
+    command: "--path.rootfs=/host"
+    networks:
+      - grafana_network
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /:/host:ro,rslave
+
+  # pihole_exporter:
+  #   container_name: pihole_exporter
+  #   image: ekofr/pihole-exporter
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - pihole
+  #   networks:
+  #     - grafana_network
+  #   environment:
+  #     - PIHOLE_HOSTNAME=192.168.1.29
+  #     - INTERVAL=30s
+  #     - PORT=9617
+
+volumes:
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  grafana_network:
+    name: grafana_network
+    external: true
+  main_network:
+    name: main_network
+    external: true

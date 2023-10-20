@@ -1,0 +1,27 @@
+services:
+  traefik:
+    image: traefik:v2.5
+    container_name: traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard-traefik.service=dashboard-traefik"
+      - "traefik.http.services.dashboard-traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.dashboard-traefik.entrypoints=web, websecure"
+      - "traefik.http.routers.dashboard-traefik.rule=Host(`traefik.neptune.local`)"
+      - "traefik.http.routers.dashboard-traefik.tls=true"
+      - "traefik.http.routers.dashboard-traefik.tls.certresolver=staging"
+    networks:
+      - main_network
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /home/neptune/containers/traefik/config:/etc/traefik
+      - /var/log/traefik:/var/log/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+networks:
+  main_network:
+    name: main_network
+    external: true

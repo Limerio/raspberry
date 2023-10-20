@@ -1,0 +1,27 @@
+---
+- name: Ensure monitor directory exists.
+  ansible.builtin.file:
+    path: "{{ containers_dir_remote }}/monitor"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy monitor docker-compose file.
+  ansible.builtin.copy:
+    src: "{{ containers_dir_local }}/monitor/docker-compose.yml"
+    dest: "{{ containers_dir_remote }}/monitor/docker-compose.yml"
+    mode: 0644
+  become: false
+
+- name: Copy monitor config.
+  ansible.builtin.copy:
+    src: "{{ containers_dir_local }}/monitor/config"
+    dest: "{{ containers_dir_remote }}/monitor/config"
+    mode: 0755
+  become: false
+
+- name: Execute docker-compose command.
+  community.docker.docker_compose:
+    project_src: "{{ containers_dir_remote }}/monitor/"
+    build: false
+  become: false

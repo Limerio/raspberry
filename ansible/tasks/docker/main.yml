@@ -1,0 +1,12 @@
+---
+- name: Install Docker
+  ansible.builtin.import_tasks: install.yml
+
+- name: Install all containers images
+  ansible.builtin.import_tasks: images.yml
+
+- name: Create all networks
+  ansible.builtin.import_tasks: networks.yml
+
+- name: Create all containers
+  ansible.builtin.import_tasks: containers/main.yml

@@ -1,0 +1,20 @@
+---
+- name: Ensure pihole directory exists.
+  ansible.builtin.file:
+    path: "{{ containers_dir_remote }}/pihole"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy pihole docker-compose file.
+  ansible.builtin.copy:
+    src: "./docker-compose.yml"
+    dest: "{{ containers_dir_remote }}/pihole/docker-compose.yml"
+    mode: 0644
+  become: false
+
+- name: Execute docker-compose command.
+  community.docker.docker_compose:
+    project_src: "{{ containers_dir_remote }}/pihole/"
+    build: false
+  become: false

@@ -1,0 +1,20 @@
+---
+- name: Ensure portainer-agent directory exists.
+  ansible.builtin.file:
+    path: "{{ containers_dir_remote }}/portainer-agent"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy portainer-agent docker-compose file.
+  ansible.builtin.copy:
+    src: "{{ containers_dir_local }}/portainer-agent/docker-compose.yml"
+    dest: "{{ containers_dir_remote }}/portainer-agent/docker-compose.yml"
+    mode: 0644
+  become: false
+
+- name: Execute docker-compose command.
+  community.docker.docker_compose:
+    project_src: "{{ containers_dir_remote }}/portainer-agent/"
+    build: false
+  become: false

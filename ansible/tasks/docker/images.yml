@@ -1,0 +1,40 @@
+---
+- name: Pull grafana
+  community.docker.docker_image:
+    name: grafana/grafana-oss
+    tag: 10.0.3
+    source: pull
+
+- name: Pull prometheus
+  community.docker.docker_image:
+    name: prom/prometheus
+    tag: v2.46.0
+    source: pull
+
+- name: Pull node-exporter
+  community.docker.docker_image:
+    name: quay.io/prometheus/node-exporter
+    tag: v1.6.1
+    source: pull
+
+- name: Pull pihole
+  community.docker.docker_image:
+    name: pihole/pihole
+    source: pull
+
+- name: Pull traefik
+  community.docker.docker_image:
+    name: traefik
+    tag: v2.5
+    source: pull
+
+- name: Pull uptime-kuma
+  community.docker.docker_image:
+    name: louislam/uptime-kuma
+    source: pull
+
+- name: Pull portainer agent
+  community.docker.docker_image:
+    name: portainer/agent
+    tag: 2.18.4
+    source: pull

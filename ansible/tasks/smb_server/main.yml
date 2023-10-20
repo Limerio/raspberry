@@ -1,0 +1,24 @@
+- name: Ensure apt cache is up to date.
+  ansible.builtin.apt:
+    name:
+      - samba
+      - samba-common-bin
+    state: present
+
+- name: Change the permission of the "containers" dir
+  ansible.builtin.file:
+    path: "{{ containers_dir_remote }}"
+    state: directory
+    mode: "777"
+
+- name: Copy samba config.
+  ansible.builtin.copy:
+    src: "./smb.conf"
+    dest: "/etc/samba/smb.conf"
+    mode: 0644
+  become: true
+
+- name: Restart smbd.
+  ansible.builtin.service:
+    name: smbd
+    state: restarted

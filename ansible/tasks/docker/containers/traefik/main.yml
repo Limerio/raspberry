@@ -1,0 +1,27 @@
+---
+- name: Ensure traefik directory exists.
+  ansible.builtin.file:
+    path: "{{ containers_dir_remote }}/traefik"
+    state: directory
+    mode: 0755
+  become: false
+
+- name: Copy traefik docker-compose file.
+  ansible.builtin.copy:
+    src: "{{ containers_dir_local }}/traefik/docker-compose.yml"
+    dest: "{{ containers_dir_remote }}/traefik/docker-compose.yml"
+    mode: 0644
+  become: false
+
+- name: Copy traefik config.
+  ansible.builtin.copy:
+    src: "{{ containers_dir_local }}/traefik/config"
+    dest: "{{ containers_dir_remote }}/traefik/config"
+    mode: 0755
+  become: false
+
+- name: Execute docker-compose command.
+  community.docker.docker_compose:
+    project_src: "{{ containers_dir_remote }}/traefik/"
+    build: false
+  become: false

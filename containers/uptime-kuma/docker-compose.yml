@@ -1,0 +1,27 @@
+services:
+  uptimekuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime-kuma.service=uptime-kuma"
+      - "traefik.http.services.uptime-kuma.loadbalancer.server.port=3001"
+      - "traefik.http.routers.uptime-kuma.entrypoints=web, websecure"
+      - "traefik.http.routers.uptime-kuma.rule=Host(`status.neptune.local`)"
+      - "traefik.http.routers.uptime-kuma.tls=true"
+      - "traefik.http.routers.uptime-kuma.tls.certresolver=staging"
+    networks:
+      - main_network
+    volumes:
+      - uptimekuma-data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+volumes:
+  uptimekuma-data:
+    driver: local
+
+networks:
+  main_network:
+    name: main_network
+    external: true

@@ -1,0 +1,14 @@
+- name: Create grafana, prometheus and node-exporter containers
+  ansible.builtin.import_tasks: monitor/main.yml
+
+- name: Create pihole container
+  ansible.builtin.import_tasks: pihole/main.yml
+
+- name: Create traefik containers
+  ansible.builtin.import_tasks: traefik/main.yml
+
+- name: Create uptime-kuma container
+  ansible.builtin.import_tasks: uptime-kuma/main.yml
+
+- name: Create portainer-agent container
+  ansible.builtin.import_tasks: portainer-agent/main.yml
